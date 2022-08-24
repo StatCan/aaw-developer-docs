@@ -7,10 +7,11 @@ In order to provide users of the platform with an S3 interface, we use a fork of
 - [aws-js-s3-explorer](https://github.com/StatCan/aws-js-s3-explorer)
 - [aaw-kubeflow-profiles-controller](https://github.com/StatCan/aaw-kubeflow-profiles-controller/)
 - [aaw-argocd-manifests](https://github.com/StatCan/aaw-argocd-manifests)
+- [charts](https://github.com/StatCan/charts/)
 
 # Feature Deployment
 
-> TODO
+![s3proxy deployment](s3proxy_controller.png)
 
 # Feature Implementation
 

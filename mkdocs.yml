@@ -11,7 +11,7 @@ nav:
     - Overview: features/index.md
     - Object Storage:
       - S3Proxy and S3 Explorer: features/object-storage/s3proxy.md
-      - Blob CSI: features/object-storage/blob-csi.md
+      - Blob CSI: features/object-storage/blobcsi.md
     - Networking:
       - Cloud Main Connectivity: features/networking/cloud-main-connectivity.md
     - Data Virtualization: features/data-virtualization/trino.md

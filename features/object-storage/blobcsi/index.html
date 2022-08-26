@@ -501,16 +501,16 @@ An example of the expected <code>.json</code> formatted response from an <code>O
 <code>alice</code> would have <code>ReadOnlyMany</code> permissions, and bob would have <code>ReadWriteMany</code> permissions.</p>
 <h1 id="architecture-design">Architecture Design</h1>
 <p>For more context on the blob-csi system as a whole (from deployment of infrastructure to azure containers), see the attached diagram below
-  - Legend:
-    - Line types:
-      - Solid lines follow the paths of the deployment or provisioning of resources.
-      - Dashed lines outline the paths for connectivity.
-    - Line Colours:
-      - Navy blue lines are used for edges connecting nodes within the kubernetes cluster.
-      - Light green lines are assiciated with kubeflow from a users perspective.
-      - Yellow lines are associated with argocd.
-      - Purple lines are associated with terraform.
-      - Light blue lines are associated with edges that connect from nodes anywhere in the diagram to an azure resource.</p>
+<code>- Legend:
+  - Line types:
+    - Solid lines follow the paths of the deployment or provisioning of resources.
+    - Dashed lines outline the paths for connectivity.
+  - Line Colours:
+    - Navy blue lines are used for edges connecting nodes within the kubernetes cluster.
+    - Light green lines are assiciated with kubeflow from a users perspective.
+    - Yellow lines are associated with argocd.
+    - Purple lines are associated with terraform.
+    - Light blue lines are associated with edges that connect from nodes anywhere in the diagram to an azure resource.</code></p>
 <p><img alt="blob-csi / System Architecture" src="../blobcsi_system.png" /></p>
 
               

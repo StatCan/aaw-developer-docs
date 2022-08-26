@@ -40,20 +40,20 @@ with Diagram(myself(), show=False):
                 s3proxy_pod = Pod("s3proxy-pod")
                 nginx = Docker("nginx")
                 s3proxy = Docker("s3proxy")
-                premium_volume = Volume("premium")
-                premium_pvc = PersistentVolumeClaim("blob-csi-premium")
+                unclassified_volume = Volume("unclassified")
+                unclassified_pvc = PersistentVolumeClaim("blob-csi-unclassified")
         premium_pv = PersistentVolume("blob-csi-pv")
-    
+
     # Requests to `/unclassified` or `/unclassified-ro` or `/protected-b` get intercepted by service worker
     browser >> Edge(label="request", color="green") >> service_worker
-    
+
     # request enters the cluster through the kubeflow ingress gateway
     service_worker >> Edge(label="request", color="green") >> ingress_gateway
 
     # ingress gateway forwards request to s3proxy service
     ingress_gateway >> Edge(label="request", color="green") >> svc
     svc >> Edge(label="static files", color="green") >> nginx
-    
+
     # AJAX calls to s3proxy service pass through to s3proxy container
     nginx >> Edge(label="s3 API calls", color="green") >> s3proxy
 
@@ -65,11 +65,11 @@ with Diagram(myself(), show=False):
 
     # s3proxy runs in filesystem mode, where the volume containing the filesystem is
     # mounted by blob-fuse
-    s3proxy >> Edge(label="backed by", style="dashed", color="black") >> premium_volume
+    s3proxy >> Edge(label="backed by", style="dashed", color="black") >> unclassified_volume
 
     # premium volume mounts to pod
-    premium_volume >> Edge(label="mounts", style="dashed", color="black") >> s3proxy_pod
+    unclassified_volume >> Edge(label="mounts", style="dashed", color="black") >> s3proxy_pod
 
     # premium volume is provisioned by a namespaced persistent volume claim
-    premium_pvc - Edge(label="binds", style="dashed", color="black") - premium_volume
-    premium_pvc - Edge(label="binds", style="dashed", color="black") - premium_pv
+    unclassified_pvc - Edge(label="binds", style="dashed", color="black") - unclassified_volume
+    unclassified_pvc - Edge(label="binds", style="dashed", color="black") - premium_pv

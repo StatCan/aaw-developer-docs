@@ -56,7 +56,8 @@ In the above example, the controller would provision a `PersistentVolume` and `P
 
 # Architecture Design
 
-For more context on the blob-csi system as a whole (from deployment of infrastructure to azure containers), see the attached diagram below
+For more context on the blob-csi system as a whole (from deployment of infrastructure to azure containers), see the attached diagram below:
+
 ```
 - Legend:
   - Line types:

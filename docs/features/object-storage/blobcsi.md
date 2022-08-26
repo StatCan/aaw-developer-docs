@@ -57,15 +57,17 @@ In the above example, the controller would provision a `PersistentVolume` and `P
 # Architecture Design
 
 For more context on the blob-csi system as a whole (from deployment of infrastructure to azure containers), see the attached diagram below
-  - Legend:
-    - Line types:
-      - Solid lines follow the paths of the deployment or provisioning of resources.
-      - Dashed lines outline the paths for connectivity.
-    - Line Colours:
-      - Navy blue lines are used for edges connecting nodes within the kubernetes cluster.
-      - Light green lines are assiciated with kubeflow from a users perspective.
-      - Yellow lines are associated with argocd.
-      - Purple lines are associated with terraform.
-      - Light blue lines are associated with edges that connect from nodes anywhere in the diagram to an azure resource.
+```
+- Legend:
+  - Line types:
+    - Solid lines follow the paths of the deployment or provisioning of resources.
+    - Dashed lines outline the paths for connectivity.
+  - Line Colours:
+    - Navy blue lines are used for edges connecting nodes within the kubernetes cluster.
+    - Light green lines are assiciated with kubeflow from a users perspective.
+    - Yellow lines are associated with argocd.
+    - Purple lines are associated with terraform.
+    - Light blue lines are associated with edges that connect from nodes anywhere in the diagram to an azure resource.
+ ```
 
 ![blob-csi / System Architecture](blobcsi_system.png)

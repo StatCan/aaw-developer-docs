@@ -15,6 +15,6 @@ dev/%: build
 	$(eval DIRNAME = $(shell dirname $(FILEPATH)))
 	$(eval BASENAME = $(notdir $@.png))
 	inotifywait -m $(FILEPATH) -e modify | while read path action file; do \
-		docker run -v $(shell pwd)/:/tmp/ aaw-dev-docs:0.1.0 $(FILEPATH); \
+		docker run -v $(shell pwd)/:/tmp/ $(IMAGE_NAME) $(FILEPATH); \
 		mv $(BASENAME) $(DIRNAME)/$(BASENAME); \
 	done;

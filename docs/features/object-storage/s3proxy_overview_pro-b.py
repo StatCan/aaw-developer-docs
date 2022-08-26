@@ -38,30 +38,30 @@ with Diagram(myself(), show=False):
                 s3proxy_pod = Pod("s3proxy-pod")
                 nginx = Docker("nginx")
                 s3proxy = Docker("s3proxy")
-                premium_volume = Volume("premium")
-                premium_pvc = PersistentVolumeClaim("blob-csi-premium")
+                protected_b_volume = Volume("protected-b")
+                protected_b_pvc = PersistentVolumeClaim("blob-csi-protected-b")
         premium_pv = PersistentVolume("blob-csi-pv")
-    
+
     # User is in noVNC notebook and desktop environment is streamed to browser through VDI.
     browser - Edge(label="vdi", color="green") - ingress_gateway
     ingress_gateway - Edge(label="vdi", color="green") - prob_pod
 
     # protected-b pod communicates to the s3proxy-web service directly
     prob_pod >> Edge(label="requests", color="green") >> svc
-    
+
     # ingress gateway forwards request to s3proxy service
     svc >> Edge(label="static files", color="green") >> nginx
-    
+
     # AJAX calls to s3proxy service pass through to s3proxy container
     nginx >> Edge(label="s3 API calls", color="green") >> s3proxy
 
     # s3proxy runs in filesystem mode, where the volume containing the filesystem is
     # mounted by blob-fuse
-    s3proxy >> Edge(label="backed by", style="dashed", color="black") >> premium_volume
+    s3proxy >> Edge(label="backed by", style="dashed", color="black") >> protected_b_volume
 
     # premium volume mounts to pod
-    premium_volume >> Edge(label="mounts", style="dashed", color="black") >> s3proxy_pod
+    protected_b_volume >> Edge(label="mounts", style="dashed", color="black") >> s3proxy_pod
 
     # premium volume is provisioned by a namespaced persistent volume claim
-    premium_pvc - Edge(label="binds", style="dashed", color="black") - premium_volume
-    premium_pvc - Edge(label="binds", style="dashed", color="black") - premium_pv
+    protected_b_pvc - Edge(label="binds", style="dashed", color="black") - protected_b_volume
+    protected_b_pvc - Edge(label="binds", style="dashed", color="black") - premium_pv

@@ -4,6 +4,10 @@ Some non-employee users of the AAW platform are authorized to perform some (but 
 
 The two main capabilities that are relevant are (1) the ability to create pods with certain base images (e.g. SAS), or (2) the ability to access certain cloud main resources (e.g. gitlab.k8s). The documentation below focuses on these two types of capabilities; additional controls may be required for capabilities that don't fall under the abovementioned types.
 
+## Relevant Issues
+
+- [Refactor Non-Employee RBAC Model](https://github.com/StatCan/daaas/issues/1335)
+
 ## Relevant Repositories
 
 - [aaw-profile-state-controller](https://github.com/StatCan/aaw-profile-state-controller)

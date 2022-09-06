@@ -16,7 +16,7 @@ nav:
       - Cloud Main Connectivity: features/networking/cloud-main-connectivity.md
     - Data Virtualization: features/data-virtualization/trino.md
     - RBAC:
-      - Non-Employee RBAC: non-employee-rbac.md
+      - Non-Employee RBAC: features/rbac/non-employee-rbac.md
   - Resources:
     - Overview: resources/index.md
     - Developer Tools: developer-tools.md

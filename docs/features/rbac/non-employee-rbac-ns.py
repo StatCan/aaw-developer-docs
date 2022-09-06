@@ -46,8 +46,7 @@ with Diagram(myself(), show=False):
 
         with Cluster("cloud-main-system"):
             ingress_netpol = Netpol("allow-ingress-from-user-ns")
-            network_policy_controller = Pod("aaw-network-policies")
-        
+
     # network policy in cloud-main-system selects namespaces with exists-non-cloud-main-users: false
     # and allows ingress from those namespaces
     ingress_netpol >> Edge(label="label selector", style="dashed", color="green") >> allowed_k8s_user_ns
@@ -68,3 +67,5 @@ with Diagram(myself(), show=False):
     # Profile State Controller applies capability labels to user profile and namespace
     profile_state_controller >> Edge(label="applies label", style="solid", color="green") >> allowed_k8s_user_profile
     profile_state_controller >> Edge(label="applies label", style="solid", color="green") >> allowed_k8s_user_ns
+    profile_state_controller >> Edge(label="applies label", style="solid", color="red") >> non_allowed_k8s_user_profile
+    profile_state_controller >> Edge(label="applies label", style="solid", color="red") >> non_allowed_k8s_user_ns

@@ -11,6 +11,9 @@ Information about individual repoositories can be found in the `README.md` and a
 | Repository | Purpose |
 |------------|---------|
 
+# Getting Started
+
+- [Instructions to connect to the AAW Kubernetes Clusters](https://confluenceb.statcan.ca/display/DAaaS/Kubernetes+documentation)
 
 # Attribution
 

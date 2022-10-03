@@ -454,6 +454,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../source-control/gitea/" class="md-nav__link">
+        Source Control
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -631,9 +645,11 @@ exceptionKind:
 <p>A Gatekeeper policy/constraint must be created for both cases so that the above scenarios are blocked at validating admission control (i.e. before the pod/notebook/rolebinding is posed to etcd).</p>
 <p>In addition, it may also be necessary to make changes to the <a href="https://github.com/StatCan/jupyter-apis">jupyter-apis</a> front-end to indicate on the UI that users are not allowed to perform certain actions. For example, for the SAS Notebook feature of the platform, the option to select a SAS notebook through the jupyter-apis UI is disabled if there exists a user without the SAS Notebook capability in the namespace.</p>
 <h1 id="feature-deployment">Feature Deployment</h1>
-<blockquote>
-<p>TODO</p>
-</blockquote>
+<p>The aaw-profile-state-controller is deployed in the <code>daaas-system</code> ArgoCD application. The manifests for the aaw-profile-state-controller deployment can be found in the <a href="https://github.com/StatCan/aaw-argocd-manifests/tree/aaw-dev-cc-00/daaas-system/profile-state-controller">daaas-system folder in the aaw-argocd-manifests</a> repository.</p>
+<p>The [aaw-profile-state-controller] repository has a github action that builds and pushes the image for the profile-state-controller application to our AAW artifactory instance. The container image is tagged with the SHA of the commit on the master branch that triggered the github action.</p>
+<p>To update the image, go to the <a href="https://github.com/StatCan/aaw-argocd-manifests/tree/aaw-dev-cc-00/daaas-system/profile-state-controller/deployment.yaml">aaw-argocd-manifests/daaas-system/profile-state-controller/deployment.yaml</a> and update the image tag to contain the SHA of the most recent commit in the <code>aaw-profile-state-controller</code> repo.</p>
+<h2 id="relevant-pull-requests">Relevant Pull Requests</h2>
+<p>This section shows the relevant pull requests that were involved with rolling out this feature into the AAW dev environment. Future updates to this feature will likely require similar pull requests to those shown below.</p>
 <h1 id="feature-implementation">Feature Implementation</h1>
 <p>This implementation proposes two kinds of feature capabilities: (1) Pod/Notebook features and (2) Namespace features.</p>
 <p>For example, the SAS notebook feature is a <strong>Pod/notebook feature</strong> because it requires deploying a specific kind of notebook into a namespace, whereas cloud-main-connectivity is a <strong>namespace feature</strong> because routing pod traffic through the egress gateway is determined by rules that are applied at the level of the namespace.</p>
@@ -679,6 +695,21 @@ exceptionKind:
           </div>
         </a>
       
+      
+        
+        <a href="../../source-control/gitea/" class="md-footer__link md-footer__link--next" aria-label="Next: Source Control" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Source Control
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
       
     </nav>
   

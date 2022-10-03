@@ -51,7 +51,17 @@ In addition, it may also be necessary to make changes to the [jupyter-apis](http
 
 # Feature Deployment
 
-> TODO
+The aaw-profile-state-controller is deployed in the `daaas-system` ArgoCD application. The manifests for the aaw-profile-state-controller deployment can be found in the [daaas-system folder in the aaw-argocd-manifests](https://github.com/StatCan/aaw-argocd-manifests/tree/aaw-dev-cc-00/daaas-system/profile-state-controller) repository.
+
+The [aaw-profile-state-controller] repository has a github action that builds and pushes the image for the profile-state-controller application to our AAW artifactory instance. The container image is tagged with the SHA of the commit on the master branch that triggered the github action.
+
+To update the image, go to the [aaw-argocd-manifests/daaas-system/profile-state-controller/deployment.yaml](https://github.com/StatCan/aaw-argocd-manifests/tree/aaw-dev-cc-00/daaas-system/profile-state-controller/deployment.yaml) and update the image tag to contain the SHA of the most recent commit in the `aaw-profile-state-controller` repo.
+
+## Relevant Pull Requests
+
+This section shows the relevant pull requests that were involved with rolling out this feature into the AAW dev environment. Future updates to this feature will likely require similar pull requests to those shown below.
+
+
 
 # Feature Implementation
 

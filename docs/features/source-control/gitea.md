@@ -15,3 +15,10 @@ Responsible for deploying [gitea](https://github.com/go-gitea/gitea) as [argocd]
 The diagram below highlights the key components involved with the Gitea controller.
 
 ![gitea controller](gitea_controller.png)
+
+## Infrastructure Deployment
+
+**Related PRs**:
+
+- [Deploy Profiles Automation ArgoCD App](https://gitlab.k8s.cloud.statcan.ca/cloudnative/aaw/daaas-infrastructure/aaw-prod-cc-00/-/merge_requests/73)
+- [Add Postgresql variables and secrets](https://gitlab.k8s.cloud.statcan.ca/cloudnative/aaw/daaas-infrastructure/aaw-prod-cc-00/-/merge_requests/74)

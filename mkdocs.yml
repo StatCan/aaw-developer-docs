@@ -17,6 +17,7 @@ nav:
     - Data Virtualization: features/data-virtualization/trino.md
     - RBAC:
       - Non-Employee RBAC: features/rbac/non-employee-rbac.md
+    - Source Control: features/source-control/gitea.md
   - Resources:
     - Overview: resources/index.md
     - Developer Tools: developer-tools.md

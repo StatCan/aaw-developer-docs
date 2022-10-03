@@ -287,43 +287,10 @@
   
   
   
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1_3" type="checkbox" id="__nav_1_3" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_1_3">
-          Networking
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Networking" data-md-level="2">
-        <label class="md-nav__title" for="__nav_1_3">
-          <span class="md-nav__icon md-icon"></span>
-          Networking
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
     <li class="md-nav__item">
-      <a href="../../networking/cloud-main-connectivity.md" class="md-nav__link">
+      <a href="../../cloud-main-connectivity.md" class="md-nav__link">
         Cloud Main Connectivity
       </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
     </li>
   
 
@@ -439,6 +406,13 @@
         <li class="md-nav__item">
   <a href="#feature-deployment" class="md-nav__link">
     Feature Deployment
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#infrastructure-deployment" class="md-nav__link">
+    Infrastructure Deployment
   </a>
   
 </li>
@@ -560,6 +534,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#infrastructure-deployment" class="md-nav__link">
+    Infrastructure Deployment
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -583,6 +564,12 @@
 <p>Responsible for deploying <a href="https://github.com/go-gitea/gitea">gitea</a> as <a href="https://github.com/argoproj/argo-cd">argocd</a> applications per <code>Profile</code>. Currently, <a href="https://github.com/argoproj/argo-cd">argocd</a> applications are deployed by the gitea controller based on the customized gitea manifest found <a href="https://github.com/StatCan/aaw-argocd-manifests/tree/aaw-dev-cc-00/profiles-argocd-system/template/gitea">here</a>.</p>
 <p>The diagram below highlights the key components involved with the Gitea controller.</p>
 <p><img alt="gitea controller" src="../gitea_controller.png" /></p>
+<h2 id="infrastructure-deployment">Infrastructure Deployment</h2>
+<p><strong>Related PRs</strong>:</p>
+<ul>
+<li><a href="https://gitlab.k8s.cloud.statcan.ca/cloudnative/aaw/daaas-infrastructure/aaw-prod-cc-00/-/merge_requests/73">Deploy Profiles Automation ArgoCD App</a></li>
+<li><a href="https://gitlab.k8s.cloud.statcan.ca/cloudnative/aaw/daaas-infrastructure/aaw-prod-cc-00/-/merge_requests/74">Add Postgresql variables and secrets</a></li>
+</ul>
 
               
             </article>

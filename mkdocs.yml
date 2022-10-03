@@ -12,7 +12,7 @@ nav:
     - Object Storage:
       - S3Proxy and S3 Explorer: features/object-storage/s3proxy.md
       - Blob CSI: features/object-storage/blobcsi.md
-    - Cloud Main Connectivity: features/cloud-main-connectivity.md
+    - Cloud Main Connectivity: features/cloud-main-connectivity/cloud-main-connectivity.md
     - Data Virtualization: features/data-virtualization/trino.md
     - RBAC:
       - Non-Employee RBAC: features/rbac/non-employee-rbac.md

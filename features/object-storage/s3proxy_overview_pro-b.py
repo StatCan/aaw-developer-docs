@@ -8,6 +8,8 @@ from diagrams.onprem.compute import Server
 from diagrams.onprem.container import Docker
 
 from diagrams.k8s.network import Service
+from diagrams.k8s.network import NetworkPolicy
+
 from diagrams.k8s.group import NS
 from diagrams.k8s.compute import Pod
 
@@ -32,9 +34,12 @@ with Diagram(myself(), show=False):
             ingress_gateway = Istio("kubeflow-ingress-gateway?")
         with Cluster("user-namespace-pb"):
             ns = NS("user-namespace-pb")
-            svc = Service("s3proxy")
-            prob_pod = Pod("noVNC-pro-b")
-            with Cluster("s3proxy-pod"):
+            svc = Service("s3proxy-protected-b")
+            svc_web = Service("s3proxy-protected-b-web")
+            pro_b_notebook = Pod("noVNC-pro-b")
+            allow_pro_b_nb_to_s3proxy = NetworkPolicy("allow-protected-b-notebook-to-s3proxy")
+            allow_s3proxy_from_pro_b_nb = NetworkPolicy("allow-s3proxy-from-protected-b-notebook")
+            with Cluster("s3proxy-protected-b-pod"):
                 s3proxy_pod = Pod("s3proxy-pod")
                 nginx = Docker("nginx")
                 s3proxy = Docker("s3proxy")
@@ -44,13 +49,15 @@ with Diagram(myself(), show=False):
 
     # User is in noVNC notebook and desktop environment is streamed to browser through VDI.
     browser - Edge(label="vdi", color="green") - ingress_gateway
-    ingress_gateway - Edge(label="vdi", color="green") - prob_pod
+    ingress_gateway - Edge(label="vdi", color="green") - pro_b_notebook
 
     # protected-b pod communicates to the s3proxy-web service directly
-    prob_pod >> Edge(label="requests", color="green") >> svc
+    pro_b_notebook >> Edge(label="API calls to s3proxy", color="green") >> svc
+    pro_b_notebook >> Edge(label="static files", color="green") >> svc_web
 
     # ingress gateway forwards request to s3proxy service
-    svc >> Edge(label="static files", color="green") >> nginx
+    svc >> Edge(label="API calls to s3proxy", color="green") >> nginx
+    svc_web >> Edge(label="static files", color="green") >> nginx
 
     # AJAX calls to s3proxy service pass through to s3proxy container
     nginx >> Edge(label="s3 API calls", color="green") >> s3proxy

@@ -13,6 +13,14 @@ In order to provide users of the platform with an S3 interface, we use a fork of
 
 ![s3proxy deployment](s3proxy_controller.png)
 
+The S3Proxy application is deployed on an opt-in basis to reduce resource consumption in the cluster. The majority of users only require filesystem access to Azure blob storage, which is already provided by the [blob fuse CSI driver](blob-csi.md); it is only necessary to deploy this s3proxy application if users explicitly require an s3 interface to Azure blob storage.
+
+To enable s3proxy in a namespace, go to the [aaw-kubeflow-profiles](https://github.com/statcan/aaw-kubeflow-profiles) repository, go to the specific  `*.jsonnet` file that contains the profile definition, then wrap the profile definition in the `addS3` function. See [this example](https://github.com/StatCan/aaw-kubeflow-profiles/blob/main/profile-aaw-fc.jsonnet#L7) for a profile where both s3proxy and Gitea were added to the namespace.
+
+If the user profile has the label `s3.statcan.gc.ca/enabled: true`, then the s3proxy profiles controller will install an ArgoCD application, an nginx configmap, and an Istio virtual service into the user's namespace. The ArgoCD application deploys a number of resources to the user's namespace via jsonnet. The ArgoCD location watches the [/profiles-argocd-system/template/s3proxy location of the aaw-argocd-manifests repo](https://github.com/StatCan/aaw-argocd-manifests/tree/aaw-dev-cc-00/profiles-argocd-system/template/s3proxy) for changes to the `aaw-dev-cc-00` or `aaw-prod-cc-00` branches for the dev and prod deployments, respectively.
+
+**Note**: there are two network policies deployed by the per-namespace ArgoCD application (manifests can be found in the `application.jsonnet` file at the repo location linked above). These network policies are required in order to allow users to connect to the protected-b s3proxy instance from a noVNC protected-b notebook.
+
 # Feature Implementation
 
 The way users connect to the s3 explorer depends on whether they are working in an unclassified environment or a protected-b environment. In an unclassified environment, the architecture is as shown in the figure below.

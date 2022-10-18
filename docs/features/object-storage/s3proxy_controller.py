@@ -1,4 +1,3 @@
-
 import os
 
 from diagrams import Cluster, Diagram, Edge
@@ -6,6 +5,8 @@ from diagrams import Cluster, Diagram, Edge
 from diagrams.k8s.podconfig import CM
 
 from diagrams.k8s.network import Service
+from diagrams.k8s.network import NetworkPolicy
+
 from diagrams.k8s.group import NS
 from diagrams.k8s.compute import Deployment
 
@@ -38,6 +39,8 @@ with Diagram(myself(), show=False):
             s3proxy_svc = Service("s3proxy")
             web_svc = Service("s3proxy-web")
             s3proxy_cm = CM("s3proxy-config")
+            allow_pro_b_nb_to_s3proxy = NetworkPolicy("allow-protected-b-notebook-to-s3proxy")
+            allow_s3proxy_from_pro_b_nb = NetworkPolicy("allow-s3proxy-from-protected-b-notebook")
     with Cluster("github"):
         github_repo = Github("aaw-argocd-manifests")
 
@@ -53,6 +56,7 @@ with Diagram(myself(), show=False):
     argocd_app >> Edge(label="deploys", color="green", style="dashed") >> s3proxy_svc
     argocd_app >> Edge(label="deploys", color="green", style="dashed") >> web_svc
     argocd_app >> Edge(label="deploys", color="green", style="dashed") >> s3proxy_cm
+    argocd_app >> Edge(label="deploys", color="green", style="dashed") >> allow_pro_b_nb_to_s3proxy
+    argocd_app >> Edge(label="deploys", color="green", style="dashed") >> allow_s3proxy_from_pro_b_nb
 
-    
-            
+

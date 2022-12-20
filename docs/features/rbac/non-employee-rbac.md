@@ -4,6 +4,12 @@ Some non-employee users of the AAW platform are authorized to perform some (but 
 
 The two main capabilities that are relevant are (1) the ability to create pods with certain base images (e.g. SAS), or (2) the ability to access certain cloud main resources (e.g. gitlab.k8s). The documentation below focuses on these two types of capabilities; additional controls may be required for capabilities that don't fall under the abovementioned types.
 
+## How to Add/Remove External Users
+1. Update the  [exception-list configmap](https://github.com/StatCan/aaw-kubeflow-profiles/blob/%40cbrown/1335-non-employee-rbac/non-employee-exceptions-config.jsonnet)
+2. Update the [external users gatekeeper constraint](https://github.com/StatCan/aaw-gatekeeper-constraints/blob/main/deny-external-users/constraint.yaml)
+3. Sync exception-list configmap on ArgoCD
+4. Restart profiles state controller deployment on ArgoCD (this is needed because we need a pod restart on the profile state controller to re-mount the updated configmap)
+
 ## Relevant Issues
 
 - [Refactor Non-Employee RBAC Model](https://github.com/StatCan/daaas/issues/1335)

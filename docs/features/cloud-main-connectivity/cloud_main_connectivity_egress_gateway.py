@@ -10,7 +10,7 @@ from diagrams.k8s.network import NetworkPolicy
 from diagrams.k8s.rbac import RoleBinding, Role, ServiceAccount
 from diagrams.k8s.podconfig import Secret
 from diagrams.onprem.compute import Server
-
+from diagrams.onprem.network import Istio
 
 def myself() -> str:
     f = os.path.basename(__file__)
@@ -40,16 +40,16 @@ with Diagram(myself(), show=False):
             # network policy
             allow_ingress_from_collin_brown = NetworkPolicy("allow-ingress-from-stc-employee")
             # istio
-            cnn_gateway = Custom("cnn-gateway", icon_path="icons/istio.png")
+            cnn_gateway = Istio("cnn-gateway")
         with Cluster("stc-employee"):
             collin_brown_ns = NS("stc-employee")
-            jupyter_notebook = Custom("test-employee-notebook", icon_path="icons/jupyter.png")
+            jupyter_notebook = Custom("test-employee-notebook", icon_path="img/jupyter.png")
             # network policy
             allow_egress_to_cloud_main = NetworkPolicy("allow-egress-to-cloud-main")
             # istio
-            cnn_virtual_service = Custom("cnn-virtual-service", icon_path="icons/istio.png")
-            cnn_destination_rule = Custom("cnn-destination-rule", icon_path="icons/istio.png")
-            cnn_service_entry = Custom("cnn-service-entry", icon_path="icons/istio.png")
+            cnn_virtual_service = Istio("cnn-virtual-service")
+            cnn_destination_rule = Istio("cnn-destination-rule")
+            cnn_service_entry = Istio("cnn-service-entry")
 
 
         # cnn_egress_gateway_debug pod runs under cnn_egress_gateway_debug_sa service account

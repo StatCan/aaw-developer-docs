@@ -10,7 +10,9 @@ from diagrams.k8s.network import NetworkPolicy
 from diagrams.k8s.rbac import RoleBinding, Role, ServiceAccount
 from diagrams.k8s.podconfig import Secret
 from diagrams.onprem.compute import Server
+
 from diagrams.onprem.network import Istio
+
 
 def myself() -> str:
     f = os.path.basename(__file__)
@@ -38,11 +40,11 @@ with Diagram(myself(), show=False):
             allow_get_secrets_role = Role("allow-get-secrets")
             allow_get_secrets_rb = RoleBinding("allow-get-secrets")
             # network policy
-            allow_ingress_from_collin_brown = NetworkPolicy("allow-ingress-from-stc-employee")
+            allow_ingress_from_collin_brown = NetworkPolicy("allow-ingress-from-collin-brown")
             # istio
             cnn_gateway = Istio("cnn-gateway")
-        with Cluster("stc-employee"):
-            collin_brown_ns = NS("stc-employee")
+        with Cluster("collin-brown"):
+            collin_brown_ns = NS("collin-brown")
             jupyter_notebook = Custom("test-employee-notebook", icon_path="img/jupyter.png")
             # network policy
             allow_egress_to_cloud_main = NetworkPolicy("allow-egress-to-cloud-main")
@@ -57,7 +59,7 @@ with Diagram(myself(), show=False):
         # Rolebinding allows pods running under cnn_egress_gateway_debug service account to get secrets in the cloud-main-system namespace
         cnn_egress_gateway_debug_sa - Edge(style="dashed", color="black") - allow_get_secrets_rb -  Edge(style="dashed", color="black") - allow_get_secrets_role
 
-        # Network policies are set up in both directions to allow ingress from stc-employee and egress to cloud-main-system
+        # Network policies are set up in both directions to allow ingress from collin-brown and egress to cloud-main-system
         allow_egress_to_cloud_main - Edge(style="dashed", color="green", label="allows") - cloud_main_system_ns
         allow_ingress_from_collin_brown - Edge(style="dashed", color="green", label="allows") - collin_brown_ns
 

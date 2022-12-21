@@ -328,13 +328,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#pr-udrfirewall-pr-to-networking-module" class="md-nav__link">
-    PR: UDR/Firewall PR to networking module
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -520,13 +513,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#pr-udrfirewall-pr-to-networking-module" class="md-nav__link">
-    PR: UDR/Firewall PR to networking module
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -549,9 +535,7 @@
 <li><a href="https://github.com/StatCan/aaw-gatekeeper-constraints/blob/main/deny-external-users/constraint.yaml">Repository: Gatekeeper Constraints</a>: exceptions of each category are specified in the parameters of the <code>DenyExternalUsers</code> constraint.</li>
 <li><a href="https://github.com/StatCan/gatekeeper-policies/pull/46">Repository: Gatekeeper Policies</a>: rego policies and tests for</li>
 <li><a href="https://github.com/StatCan/daaas/issues/1335">Issue: Non-Employee RBAC Model</a></li>
-<li>
-<h2 id="pr-udrfirewall-pr-to-networking-module"><a href="https://gitlab.k8s.cloud.statcan.ca/cloudnative/aaw/modules/terraform-azure-statcan-aaw-network/-/merge_requests/17">PR: UDR/Firewall PR to networking module</a></h2>
-</li>
+<li><a href="https://gitlab.k8s.cloud.statcan.ca/cloudnative/aaw/modules/terraform-azure-statcan-aaw-network/-/merge_requests/17">PR: UDR/Firewall PR to networking module</a></li>
 </ul>
 <h1 id="feature-deployment">Feature Deployment</h1>
 <p><strong>Note about Istio Logging</strong>:</p>
@@ -562,13 +546,15 @@
 <p>The <code>profile-state-controller</code> watches rolebindings in each kubeflow profile. If a profile only contains role bindings whose subjects' email domains are either <code>statcan.gc.ca</code> or <code>cloud.statcan.ca</code>, then the profile and corresponding namespace are given the label <code>state.aaw.statcan.gc.ca/exists-non-cloud-main-user=false</code>, indicating that there are no non-employee users present in the namespace. If one or more role bindings contain a subject with an email domain other than <code>statcan.gc.ca</code> or <code>cloud.statcan.ca</code>, the profile and namespace are given the label <code>state.aaw.statcan.gc.ca/exists-non-cloud-main-user=true</code>, indicating that there is at least one non-employee user with access to the namespace.</p>
 <p><img alt="profile-state-controller" src="../cloud_main_connectivity_profile_state_controller.png" /></p>
 <h2 id="istio-egress-gateway">Istio Egress Gateway</h2>
-<p>A <code>virtual-service-controller</code> in the <code>daaas-system</code> namespace watches namespaces and creates an Istio Virtual Service (<code>gitlab-virtual-service</code>) in namespaces with the label <code>state.aaw.statcan.gc.ca/exists-non-cloud-main-user=false</code>, but not in namespaces with the label <code>state.aaw.statcan.gc.ca/exists-non-cloud-main-user=true</code>. The virtual service configures the envoy proxies of pods in the employee namespace to route outbound traffic with host matching <code>gitlab.k8s.cloud.statcan.ca</code> to the <code>cloud-main-egress-gateway</code>.</p>
-<p>The subnet of the <code>cloud-main-nodepool</code> on <code>aaw-prod-cc-00</code> has a different IP range from the subnet of user nodes as per https://github.com/StatCan/daaas/issues/1097#issuecomment-1126119440. Due to these different IP ranges, a dedicated Istio egress gateway (<code>cloud-main-egress-gateway</code>) can be deployed on a <code>cloud-main-system</code> node pool with a distinct IP range from pods scheduled to the user node pool.</p>
+<p>The following diagrams illustrate the behaviour of the Istio Egress Gateway as well as the deployed components required for this example.</p>
+<p><img alt="istio-egress-gateway-behaviour" src="../cloud_main_connectivity_egress_gateway_behaviour.png" />
+<img alt="istio-egress-gateway-deployed-components" src="../cloud_main_connectivity_egress_gateway_deployed_components.png" /></p>
+<p>The <a href="https://github.com/StatCan/aaw-kubeflow-profiles-controller/blob/main/cmd/cloud-main.go"><code>profiles-controller-cloud-main</code> controller</a> (deployed in the <code>daaas-system</code> namespace) watches namespaces and creates an Istio Virtual Service called <code>cloud-main-virtualservice</code> in all namespaces with the label <code>state.aaw.statcan.gc.ca/exists-non-cloud-main-user=false</code>, but not in namespaces with the label <code>state.aaw.statcan.gc.ca/exists-non-cloud-main-user=true</code>. The virtual service configures the envoy proxies of pods in the employee namespace to route outbound traffic with host matching <a href="https://github.com/StatCan/aaw-kubeflow-profiles-controller/blob/main/cmd/cloud-main.go#L149-L151">a list of allowed hosts</a> (e.g. <code>gitlab.k8s.cloud.statcan.ca</code>) to the <code>cloud-main-egress-gateway</code>.</p>
+<p>A <a href="https://github.com/StatCan/terraform-azure-statcan-aaw-environment/blob/main/01-infrastructure.tf#L231-L256">special cloud main node pool</a> is created on the Kubernetes cluster and <a href="https://github.com/StatCan/terraform-azure-statcan-aaw-network/blob/ce5f4f32bfc72586c9289b4bb62ab9aeeae03b2e/aks.tf#L39-L47">assigned a subnet with a distinct IP range</a>. A dedicated Istio egress gateway pod is scheduled to a node from the cloud main node pool, which receives a pod IP from the subnet assigned to the cloud main node pool. This egress gateway pod IP comes from an IP range that is distinct from the subnet of user node pools.</p>
 <p>The virtual service deployed into employee-only namespaces configures the envoy proxies on each pod in the namespace to route traffic to <code>gitlab.k8s.cloud.statcan.ca</code> to the <code>cloud-main-egress-gateway</code>. Therefore, when pods running in employee-only namespaces (containing <code>gitlab-service-entry</code>) initiate a request to <code>gitlab.k8s.cloud.statcan.ca</code>, the request is routed through the <code>cloud-main-egress-gateway</code>, which will have an outgoing IP associated with one of the <code>cloud-main-system</code> nodes. When pods running in namespaces that contain an external employee (not containing <code>gitlab-service-entry</code>), requests to <code>gitlab.k8s.cloud.statcan.ca</code> will not be routed through the <code>cloud-main-egress-gateway</code>, and therefore will have an outgoing IP address associated with a user node.</p>
 <p>In the cloud main boundary firewall, a rule can be put in place to only allow incoming TCP traffic on ports 443 or 22 originating from the <code>cloud-main-egress-gateway</code> IP address; requests originating from user pod IPs will be blocked at the firewall level.</p>
 <p>In each employee-only namespace, network policies must be added that allow egress to the <code>cloud-main-system</code> namespace. A corresponding network policy based on a namespace label selector (see e.g. description posted in  https://github.com/StatCan/daaas/issues/1097#issue-1234409276) must be added to the <code>cloud-main-system</code> namespace to allow ingress from employee-only namespaces.</p>
 <p>The green arrow in the diagram below shows the route taken by requests to <code>gitlab.k8s.cloud.statcan.ca</code> from employee-only namespaces, while the red arrow shows the route taken by requests to <code>gitlab.k8s.cloud.statcan.ca</code> from namespaces with at least one non-employee users.</p>
-<p><img alt="istio-virtual-service" src="../cloud_main_connectivity_egress_gateway.png" /></p>
 <h2 id="azure-networking">Azure Networking</h2>
 <p>Several Azure components need to be configured through Terraform.</p>
 <blockquote>

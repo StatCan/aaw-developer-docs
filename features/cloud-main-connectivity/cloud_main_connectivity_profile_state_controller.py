@@ -1,6 +1,6 @@
 import os
-import profile
 
+from diagrams.onprem.workflow import Kubeflow
 from diagrams import Cluster, Diagram, Edge
 from diagrams.azure.compute import AKS
 from diagrams.custom import Custom
@@ -21,12 +21,12 @@ with Diagram(myself(), show=False):
         with Cluster("aaw-prod-cc-00"):
             aaw_prod_cc_00 = AKS("aaw-prod-cc-00")
         with Cluster("non-employee-namespace"):
-            non_stc_employee_kf_profile = Custom("non-stc-employee-kf-profile", icon_path="icons/kubeflow.png")
+            non_stc_employee_kf_profile = Kubeflow("non-stc-employee-kf-profile")
             non_stc_employee_ns = NS("non-stc-employee")
             john_doe_rb_1 = RoleBinding("john.doe@cloud.statcan.ca")
             alice_rb = RoleBinding("alice@external.ca")
         with Cluster("employee-namespace"):
-            stc_employee_kf_profile = Custom("stc-employee-kf-profile", icon_path="icons/kubeflow.png")
+            stc_employee_kf_profile = Kubeflow("stc-employee-kf-profile")
             stc_employee_ns = NS("non-stc-employee")
             jane_doe_rb = RoleBinding("jane.doe@statcan.gc.ca")
             john_doe_rb_2 = RoleBinding("john.doe@cloud.statcan.ca")

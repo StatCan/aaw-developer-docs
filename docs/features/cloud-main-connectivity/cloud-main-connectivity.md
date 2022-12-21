@@ -23,6 +23,11 @@ The `profile-state-controller` watches rolebindings in each kubeflow profile. If
 
 ## Istio Egress Gateway
 
+The following diagrams illustrate the behaviour of the Istio Egress Gateway as well as the deployed components required for this example.
+
+![istio-egress-gateway-behaviour](cloud_main_connectivity_egress_gateway_behaviour.png)
+![istio-egress-gateway-deployed-components](cloud_main_connectivity_egress_gateway_deployed_components.png)
+
 The [`profiles-controller-cloud-main` controller](https://github.com/StatCan/aaw-kubeflow-profiles-controller/blob/main/cmd/cloud-main.go) (deployed in the `daaas-system` namespace) watches namespaces and creates an Istio Virtual Service called `cloud-main-virtualservice` in all namespaces with the label `state.aaw.statcan.gc.ca/exists-non-cloud-main-user=false`, but not in namespaces with the label `state.aaw.statcan.gc.ca/exists-non-cloud-main-user=true`. The virtual service configures the envoy proxies of pods in the employee namespace to route outbound traffic with host matching [a list of allowed hosts](https://github.com/StatCan/aaw-kubeflow-profiles-controller/blob/main/cmd/cloud-main.go#L149-L151) (e.g. `gitlab.k8s.cloud.statcan.ca`) to the `cloud-main-egress-gateway`.
 
 
@@ -36,7 +41,6 @@ In each employee-only namespace, network policies must be added that allow egres
 
 The green arrow in the diagram below shows the route taken by requests to `gitlab.k8s.cloud.statcan.ca` from employee-only namespaces, while the red arrow shows the route taken by requests to `gitlab.k8s.cloud.statcan.ca` from namespaces with at least one non-employee users.
 
-![istio-virtual-service](cloud_main_connectivity_egress_gateway.png)
 
 ## Azure Networking
 

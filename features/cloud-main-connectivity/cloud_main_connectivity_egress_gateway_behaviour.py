@@ -27,9 +27,6 @@ with Diagram(myself(), show=False):
         with Cluster("istio-operator-system"):
             istio_operator_system_ns = NS("istio-operator-system")
             istio_operator_controller = Deployment("istio-operator")
-        with Cluster("istio-system"):
-            istio_system_ns = NS("istio-system")
-            istio_daemon = Deployment("istiod")
         with Cluster("cloud-main-system"):
             cloud_main_system_ns = NS("cloud-main-system")
             cnn_egress_gateway_debug = Deployment("cnn-egress-gateway-debug")

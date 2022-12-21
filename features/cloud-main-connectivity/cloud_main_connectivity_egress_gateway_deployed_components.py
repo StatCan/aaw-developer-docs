@@ -27,9 +27,6 @@ with Diagram(myself(), show=False):
         with Cluster("istio-operator-system"):
             istio_operator_system_ns = NS("istio-operator-system")
             istio_operator_controller = Deployment("istio-operator")
-        with Cluster("istio-system"):
-            istio_system_ns = NS("istio-system")
-            istio_daemon = Deployment("istiod")
         with Cluster("cloud-main-system"):
             cloud_main_system_ns = NS("cloud-main-system")
             cnn_egress_gateway_debug = Deployment("cnn-egress-gateway-debug")
@@ -55,8 +52,6 @@ with Diagram(myself(), show=False):
 
         # Istio Operator Controller watches a set of namespaces for deployments of IstioOperator resources
         istio_operator_controller >> Edge(style="dashed", color="black", label="watches") >> cloud_main_system_ns
-        # IstioOperator currently uses minimal profile and deploys istiod into istio-system namespace
-        istio_operator >> Edge(style="dashed", color="purple", label="deploys") >> istio_daemon
         # IstioOperator currently deploys an egress gateway into the `cloud-main-system` namespace
         istio_operator >> Edge(style="dashed", color="purple", label="deploys") >> cnn_egress_gateway_debug
         # IstioOperator deploys service account and secret with service account JWT into cloud-main-system namespace

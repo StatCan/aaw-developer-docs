@@ -45,3 +45,8 @@ Several Azure components need to be configured through Terraform.
 > TODO
 
 ![azure-networking](cloud_main_connectivity_azure_network.png)
+
+
+## Attribution
+
+- Jupyter Icon borrowed from [wikimedia commons](https://commons.wikimedia.org/wiki/File:Jupyter_logo.svg)

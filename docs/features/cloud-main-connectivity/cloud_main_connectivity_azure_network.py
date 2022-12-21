@@ -27,7 +27,7 @@ with Diagram(myself(), show=False):
             azure_aks_route_rule = RouteFilters("azurerm_route network_default")
             with Cluster("azurerm_subnet cloud-main-system"):
                 azure_cloudmain_subnet = Subnets("azurerm_subnet cloud-main-system")
-                non_stc_employee_nb = Custom("non-employee-nb", icon_path="icons/jupyter.png")
+                non_stc_employee_nb = Custom("non-employee-nb", icon_path="img/jupyter.png")
             with Cluster("azurerm_subnet cloud-main-system"):
                 azure_cloudmain_subnet = Subnets("azurerm_subnet cloud-main-system")
 

@@ -590,7 +590,7 @@
 <p>The two main capabilities that are relevant are (1) the ability to create pods with certain base images (e.g. SAS), or (2) the ability to access certain cloud main resources (e.g. gitlab.k8s). The documentation below focuses on these two types of capabilities; additional controls may be required for capabilities that don't fall under the abovementioned types.</p>
 <h2 id="how-to-addremove-external-users">How to Add/Remove External Users</h2>
 <ol>
-<li>Update the  <a href="https://github.com/StatCan/aaw-kubeflow-profiles/blob/%40cbrown/1335-non-employee-rbac/non-employee-exceptions-config.jsonnet">exception-list configmap</a></li>
+<li>Update the  <a href="https://github.com/StatCan/aaw-kubeflow-profiles/blob/main/non-employee-exceptions-config.jsonnet">exception-list configmap</a></li>
 <li>Update the <a href="https://github.com/StatCan/aaw-gatekeeper-constraints/blob/main/deny-external-users/constraint.yaml">external users gatekeeper constraint</a></li>
 <li>Sync exception-list configmap on ArgoCD</li>
 <li>Restart profiles state controller deployment on ArgoCD (this is needed because we need a pod restart on the profile state controller to re-mount the updated configmap)</li>

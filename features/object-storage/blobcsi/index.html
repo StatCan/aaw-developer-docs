@@ -519,14 +519,17 @@ to reconcile the change. There are two possible classifications for volumes: <co
 the controller queries <code>unclassified</code> and <code>protected-b</code> <code>OPA</code> gateways <code>pod</code>s via <code>http</code> requests, recieving a <code>.json</code> formatted response.
 An example of the expected <code>.json</code> formatted response from an <code>OPA</code> gateway is included below:</p>
 <pre><code class="language-json">{
-    &quot;container1&quot;: {
+    &quot;container1/SubfolderName&quot;: {
+        &quot;name&quot;    : &quot;name-of-pvc&quot;,
         &quot;readers&quot; : [&quot;alice&quot;, &quot;bob&quot;],
-        &quot;writers&quot; : [&quot;bob&quot;]
+        &quot;writers&quot; : [&quot;bob&quot;],
+        &quot;spn&quot;     : &quot;name-of-spn&quot;
     }
 }
 </code></pre>
 <p>In the above example, the controller would provision a <code>PersistentVolume</code> and <code>PersistentVolumeClaim</code> for both <code>alice</code> and <code>bob</code>, however
-<code>alice</code> would have <code>ReadOnlyMany</code> permissions, and bob would have <code>ReadWriteMany</code> permissions.</p>
+<code>alice</code> would have <code>ReadOnlyMany</code> permissions, and bob would have <code>ReadWriteMany</code> permissions. There is also an option to mount subfolders
+to a user's container.</p>
 <h1 id="architecture-design">Architecture Design</h1>
 <p>For more context on the blob-csi system as a whole (from deployment of infrastructure to azure containers), see the attached diagram below.
 In addition, refer to the below legend for line types and colours.</p>

@@ -57,6 +57,8 @@ In the above example, the controller would provision a `PersistentVolume` and `P
 `alice` would have `ReadOnlyMany` permissions, and bob would have `ReadWriteMany` permissions. There is also an option to mount subfolders
 to a user's container.
 
+For every FDI project container request there needs to be a Service Principal created. AAW will create
+an App Registration via Cloud Jira (Operational Support). AAW will also create the client secret in the `azure-blob-csi-system` ns via Terraform in `azure-blob-csi-system.tf` using appropriate naming convention `SPN + "-secret"`
 # Architecture Design
 
 For more context on the blob-csi system as a whole (from deployment of infrastructure to azure containers), see the attached diagram below.

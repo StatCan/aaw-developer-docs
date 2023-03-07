@@ -45,14 +45,17 @@ An example of the expected `.json` formatted response from an `OPA` gateway is i
 
 ```json
 {
-    "container1": {
+    "container1/SubfolderName": {
+        "name"    : "name-of-pvc",
         "readers" : ["alice", "bob"],
-        "writers" : ["bob"]
+        "writers" : ["bob"],
+        "spn"     : "name-of-spn"
     }
 }
 ```
 In the above example, the controller would provision a `PersistentVolume` and `PersistentVolumeClaim` for both `alice` and `bob`, however
-`alice` would have `ReadOnlyMany` permissions, and bob would have `ReadWriteMany` permissions.
+`alice` would have `ReadOnlyMany` permissions, and bob would have `ReadWriteMany` permissions. There is also an option to mount subfolders
+to a user's container.
 
 # Architecture Design
 

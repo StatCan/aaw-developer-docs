@@ -530,6 +530,8 @@ An example of the expected <code>.json</code> formatted response from an <code>O
 <p>In the above example, the controller would provision a <code>PersistentVolume</code> and <code>PersistentVolumeClaim</code> for both <code>alice</code> and <code>bob</code>, however
 <code>alice</code> would have <code>ReadOnlyMany</code> permissions, and bob would have <code>ReadWriteMany</code> permissions. There is also an option to mount subfolders
 to a user's container.</p>
+<p>For every FDI project container request there needs to be a Service Principal created. AAW will create
+an App Registration via Cloud Jira (Operational Support). AAW will also create the client secret in the <code>azure-blob-csi-system</code> ns via Terraform in <code>azure-blob-csi-system.tf</code> using appropriate naming convention <code>SPN + "-secret"</code></p>
 <h1 id="architecture-design">Architecture Design</h1>
 <p>For more context on the blob-csi system as a whole (from deployment of infrastructure to azure containers), see the attached diagram below.
 In addition, refer to the below legend for line types and colours.</p>

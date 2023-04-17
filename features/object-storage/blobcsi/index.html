@@ -509,29 +509,71 @@ production is near identical, with the only difference being the use of the word
 node in the cluster, and each <code>csi-controller pod</code> mounts any volumes requested.</p>
 <h2 id="the-blob-csigo-kubernetes-controller">The blob-csi.go Kubernetes Controller</h2>
 <p>The <a href="https://github.com/StatCan/aaw-kubeflow-profiles-controller/blob/main/cmd/blob-csi.go">blob-csi.go kubernetes controller</a> is responsible
-for the creation of <code>PersistentVolume</code>, <code>PersistentVolumeClaim</code> and azure storage containers per user namespace in AAW. In addition, the
-controller must monitor a permissions list obtained through <code>OPA</code> gateways which serve a list of azure containers and who can be a reader/writer for each container. The permissions lists are managed by <code>Fair Data Infrastructure team (FDI)</code>.</p>
+for the creation of <code>PersistentVolume</code>, <code>PersistentVolumeClaim</code> and azure storage containers per user namespace in AAW. The permissions lists are managed by <code>Fair Data Infrastructure team (FDI)</code>.</p>
 <p>AAW default volumes are configured <a href="https://github.com/StatCan/aaw-argocd-manifests/blob/aaw-dev-cc-00/daaas-system/profile-controllers/profiles-controller/application.jsonnet#L62-L64">here</a>
 and any change to the <code>name</code> field will result in the deletion and re-creation of <code>PersistentVolume</code> and <code>PersistentVolumeClaim</code> resources
 to reconcile the change. There are two possible classifications for volumes: <code>unclassified</code> and <code>protected-b</code>. Notice that the
 <code>unclassified-ro</code> classification is <code>protected-b</code>. This is so that users can view <code>unclassified</code> data within a <code>protected-b</code> pod (volume classifications are enforced by <code>Gatekeeper</code> upon creation of a notebook).</p>
 <p>In order for the controller to determine which <code>PersistentVolume</code>s and <code>PersistentVolumeClaim</code>s to create for <code>FDI</code> containers,
-the controller queries <code>unclassified</code> and <code>protected-b</code> <code>OPA</code> gateways <code>pod</code>s via <code>http</code> requests, recieving a <code>.json</code> formatted response.
-An example of the expected <code>.json</code> formatted response from an <code>OPA</code> gateway is included below:</p>
-<pre><code class="language-json">{
-    &quot;container1/SubfolderName&quot;: {
-        &quot;name&quot;    : &quot;name-of-pvc&quot;,
-        &quot;readers&quot; : [&quot;alice&quot;, &quot;bob&quot;],
-        &quot;writers&quot; : [&quot;bob&quot;],
-        &quot;spn&quot;     : &quot;name-of-spn&quot;
-    }
-}
+the controller queries <code>unclassified</code> and <code>protected-b</code> via a K8s ConfigMap in <code>azure-blob-csi-system.tf</code>, recieving a <code>.json</code> formatted response.
+An example of the expected <code>.json</code> formatted response:</p>
+<pre><code class="language-json">fdi-unclassified-internal.json: |
+      [
+        {
+                &quot;bucketName&quot;: &quot;aaw-pv-internal-un-testing&quot;,
+                &quot;pvName&quot;:     &quot;test-iunc&quot;,
+                &quot;subfolder&quot;:  &quot;&quot;,
+                &quot;readers&quot;:    [&quot;alice, bob&quot;],
+                &quot;writers&quot;:    [&quot;alice, bob&quot;],
+                &quot;spn&quot;:        &quot;pv-internal-unclassified-dev-sp&quot;
+        }
+      ]
+fdi-protected-b-internal.json: |
+      [
+        {
+                &quot;bucketName&quot;: &quot;aaw-pv-internal-pb-testing&quot;,
+                &quot;pvName&quot;:     &quot;test-iprotb&quot;,
+                &quot;subfolder&quot;:  &quot;&quot;,
+                &quot;readers&quot;:    [&quot;alice, bob&quot;],
+                &quot;writers&quot;:    [&quot;alice, bob&quot;],
+                &quot;spn&quot;: &quot;pv-internal-protected-b-dev-sp&quot;
+          }
+      ]
+fdi-protected-b-external.json: |
+      [
+        {
+                &quot;bucketName&quot;: &quot;aaw-pv-external-pb-testing&quot;,
+                &quot;pvName&quot;:     &quot;test-eprotb&quot;,
+                &quot;subfolder&quot;:  &quot;&quot;,
+                &quot;readers&quot;:    [&quot;alice, bob&quot;],
+                &quot;writers&quot;:    [&quot;alice, bob&quot;],
+                &quot;spn&quot;: &quot;pv-external-protected-b-dev-sp&quot;
+          }
+      ]
+fdi-unclassified-external.json: |
+      [
+        {
+                &quot;bucketName&quot;: &quot;aaw-pv-external-un-testing&quot;,
+                &quot;pvName&quot;:     &quot;test-eunc&quot;,
+                &quot;subfolder&quot;:  &quot;&quot;,
+                &quot;readers&quot;:    [&quot;alice, bob&quot;],
+                &quot;writers&quot;:    [&quot;alice, bob&quot;],
+                &quot;spn&quot;:        &quot;pv-external-unclassified-dev-sp&quot;
+        }
+      ]
 </code></pre>
 <p>In the above example, the controller would provision a <code>PersistentVolume</code> and <code>PersistentVolumeClaim</code> for both <code>alice</code> and <code>bob</code>, however
 <code>alice</code> would have <code>ReadOnlyMany</code> permissions, and bob would have <code>ReadWriteMany</code> permissions. There is also an option to mount subfolders
-to a user's container.</p>
+to a user's container. <code>bucketName</code> is the name of the container created in the storage account. <code>pvName</code> is the pre-fix of the volume in the format of projectName-internal/external-unclassified/protected</p>
 <p>For every FDI project container request there needs to be a Service Principal created. AAW will create
 an App Registration via Cloud Jira (Operational Support). AAW will also create the client secret in the <code>azure-blob-csi-system</code> ns via Terraform in <code>azure-blob-csi-system.tf</code> using appropriate naming convention <code>SPN + "-secret"</code></p>
+<p>FDI Common Storage has 4 storage accounts:
+DEV                                                                 PROD
+- stndmfdidpb01sa (external protected-b)                            - stpdmfdidpb01sa (external protected-b)
+- stndmfdidun01sa (external unclassified)                           - stpdmfdidun01sa (external unclassified)
+- stndmfdiipb01sa (internal protected-b)                            - stpdmfdiipb01sa (internal protected-b)
+- stndmfdiiun01sa (internal unclassified)                           - stpdmfdiiun01sa (internal unclassified)</p>
+<p>External users should not have access to mount/view internal volumes to their notebooks.</p>
 <h1 id="architecture-design">Architecture Design</h1>
 <p>For more context on the blob-csi system as a whole (from deployment of infrastructure to azure containers), see the attached diagram below.
 In addition, refer to the below legend for line types and colours.</p>

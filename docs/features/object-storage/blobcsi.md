@@ -31,8 +31,7 @@ node in the cluster, and each `csi-controller pod` mounts any volumes requested.
 
 ## The blob-csi.go Kubernetes Controller
 The [blob-csi.go kubernetes controller](https://github.com/StatCan/aaw-kubeflow-profiles-controller/blob/main/cmd/blob-csi.go) is responsible
-for the creation of `PersistentVolume`, `PersistentVolumeClaim` and azure storage containers per user namespace in AAW. In addition, the
-controller must monitor a permissions list obtained through `OPA` gateways which serve a list of azure containers and who can be a reader/writer for each container. The permissions lists are managed by `Fair Data Infrastructure team (FDI)`.
+for the creation of `PersistentVolume`, `PersistentVolumeClaim` and azure storage containers per user namespace in AAW. The permissions lists are managed by `Fair Data Infrastructure team (FDI)`.
 
 AAW default volumes are configured [here](https://github.com/StatCan/aaw-argocd-manifests/blob/aaw-dev-cc-00/daaas-system/profile-controllers/profiles-controller/application.jsonnet#L62-L64)
 and any change to the `name` field will result in the deletion and re-creation of `PersistentVolume` and `PersistentVolumeClaim` resources
@@ -40,25 +39,71 @@ to reconcile the change. There are two possible classifications for volumes: `un
 `unclassified-ro` classification is `protected-b`. This is so that users can view `unclassified` data within a `protected-b` pod (volume classifications are enforced by `Gatekeeper` upon creation of a notebook).
 
 In order for the controller to determine which `PersistentVolume`s and `PersistentVolumeClaim`s to create for `FDI` containers,
-the controller queries `unclassified` and `protected-b` `OPA` gateways `pod`s via `http` requests, recieving a `.json` formatted response.
-An example of the expected `.json` formatted response from an `OPA` gateway is included below:
+the controller queries `unclassified` and `protected-b` via a K8s ConfigMap in `azure-blob-csi-system.tf`, recieving a `.json` formatted response.
+An example of the expected `.json` formatted response:
 
 ```json
-{
-    "container1/SubfolderName": {
-        "name"    : "name-of-pvc",
-        "readers" : ["alice", "bob"],
-        "writers" : ["bob"],
-        "spn"     : "name-of-spn"
-    }
-}
+fdi-unclassified-internal.json: |
+      [
+        {
+                "bucketName": "aaw-pv-internal-un-testing",
+                "pvName":     "test-iunc",
+                "subfolder":  "",
+                "readers":    ["alice, bob"],
+                "writers":    ["alice, bob"],
+                "spn":        "pv-internal-unclassified-dev-sp"
+        }
+      ]
+fdi-protected-b-internal.json: |
+      [
+        {
+                "bucketName": "aaw-pv-internal-pb-testing",
+                "pvName":     "test-iprotb",
+                "subfolder":  "",
+                "readers":    ["alice, bob"],
+                "writers":    ["alice, bob"],
+                "spn": "pv-internal-protected-b-dev-sp"
+          }
+      ]
+fdi-protected-b-external.json: |
+      [
+        {
+                "bucketName": "aaw-pv-external-pb-testing",
+                "pvName":     "test-eprotb",
+                "subfolder":  "",
+                "readers":    ["alice, bob"],
+                "writers":    ["alice, bob"],
+                "spn": "pv-external-protected-b-dev-sp"
+          }
+      ]
+fdi-unclassified-external.json: |
+      [
+        {
+                "bucketName": "aaw-pv-external-un-testing",
+                "pvName":     "test-eunc",
+                "subfolder":  "",
+                "readers":    ["alice, bob"],
+                "writers":    ["alice, bob"],
+                "spn":        "pv-external-unclassified-dev-sp"
+        }
+      ]
 ```
 In the above example, the controller would provision a `PersistentVolume` and `PersistentVolumeClaim` for both `alice` and `bob`, however
 `alice` would have `ReadOnlyMany` permissions, and bob would have `ReadWriteMany` permissions. There is also an option to mount subfolders
-to a user's container.
+to a user's container. `bucketName` is the name of the container created in the storage account. `pvName` is the pre-fix of the volume in the format of projectName-internal/external-unclassified/protected
 
 For every FDI project container request there needs to be a Service Principal created. AAW will create
 an App Registration via Cloud Jira (Operational Support). AAW will also create the client secret in the `azure-blob-csi-system` ns via Terraform in `azure-blob-csi-system.tf` using appropriate naming convention `SPN + "-secret"`
+
+FDI Common Storage has 4 storage accounts:
+DEV                                                                 PROD
+- stndmfdidpb01sa (external protected-b)                            - stpdmfdidpb01sa (external protected-b)
+- stndmfdidun01sa (external unclassified)                           - stpdmfdidun01sa (external unclassified)
+- stndmfdiipb01sa (internal protected-b)                            - stpdmfdiipb01sa (internal protected-b)
+- stndmfdiiun01sa (internal unclassified)                           - stpdmfdiiun01sa (internal unclassified)
+
+External users should not have access to mount/view internal volumes to their notebooks.
+
 # Architecture Design
 
 For more context on the blob-csi system as a whole (from deployment of infrastructure to azure containers), see the attached diagram below.

@@ -568,12 +568,33 @@ to a user's container. <code>bucketName</code> is the name of the container crea
 <p>For every FDI project container request there needs to be a Service Principal created. AAW will create
 an App Registration via Cloud Jira (Operational Support). AAW will also create the client secret in the <code>azure-blob-csi-system</code> ns via Terraform in <code>azure-blob-csi-system.tf</code> using appropriate naming convention <code>SPN + "-secret"</code></p>
 <p>FDI Common Storage has 4 storage accounts:
-DEV                                                                 PROD
-- stndmfdidpb01sa (external protected-b)                            - stpdmfdidpb01sa (external protected-b)
-- stndmfdidun01sa (external unclassified)                           - stpdmfdidun01sa (external unclassified)
-- stndmfdiipb01sa (internal protected-b)                            - stpdmfdiipb01sa (internal protected-b)
-- stndmfdiiun01sa (internal unclassified)                           - stpdmfdiiun01sa (internal unclassified)</p>
-<p>External users should not have access to mount/view internal volumes to their notebooks.</p>
+DEV
+- stndmfdidpb01sa (external protected-b)
+- stndmfdidun01sa (external unclassified)
+- stndmfdiipb01sa (internal protected-b)
+- stndmfdiiun01sa (internal unclassified)</p>
+<p>PROD
+- stpdmfdidpb01sa (external protected-b)
+- stpdmfdidun01sa (external unclassified)
+- stpdmfdiipb01sa (internal protected-b)
+- stpdmfdiiun01sa (internal unclassified)
+External users should not have access to mount/view internal volumes to their notebooks.</p>
+<h1 id="how-to-create-a-new-fdi-container">How to create a new FDI container?</h1>
+<ol>
+<li>AAW submits a Cloud JIRA (Cloud Operations) to create a new App Registration with the appropriate naming convention (aaw-PROJECTACRONYM-prod-sp)
+A new Service Principal is only required if this is for a new project. If an existing project requires an additional volume, the existing Service Prinicpal
+can be used.</li>
+<li>Request FDI to create the container in the appropriate Azure Storage account (internal/external - unclassified/protected-b). FDI will add the SP to the container's
+ACL.</li>
+<li>AAW must create the client id and client secret for the Service Prinicpal and persist it as a Kubernetes Secret in the <code>azure-blob-csi-system.tf</code>. It creates the client id as a secret in the <code>daaas-system</code> namespace and the client secret in the <code>azure-blob-csi-system</code> namespace.</li>
+<li>AAW will then update the <code>fdi-aaw-configuration</code> config map in <code>azure-blob-csi-system.tf</code>.
+<code>BucketName</code> is the name of the container created in the storage account.
+<code>pvName</code> is the name of the persistentVolume. Following naming convention of: <code>ProjectName-iunc</code> (internal unclassified), <code>ProjectName-eprotb</code> (external protected-b)
+<code>readers/writers</code> namespaces who require access to the volumes
+<code>spn</code> name of the Service Principal that was created through the Cloud JIRA
+<code>subfolder</code> if a project requires sub-folder mounting then this folder must be created before provisioning the volumes. If sub-folder is not required, leave the name as empty string</li>
+</ol>
+<p>Note: For debugging there are test containers created in all Prod and Dev storage accounts for future development and testing.</p>
 <h1 id="architecture-design">Architecture Design</h1>
 <p>For more context on the blob-csi system as a whole (from deployment of infrastructure to azure containers), see the attached diagram below.
 In addition, refer to the below legend for line types and colours.</p>

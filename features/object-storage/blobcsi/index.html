@@ -593,8 +593,9 @@ ACL.</li>
 <code>readers/writers</code> namespaces who require access to the volumes
 <code>spn</code> name of the Service Principal that was created through the Cloud JIRA
 <code>subfolder</code> if a project requires sub-folder mounting then this folder must be created before provisioning the volumes. If sub-folder is not required, leave the name as empty string</li>
+<li>AAW will add the SP to the appropriate AD Group. Depending on the container created and environment the SP will be added to either: <code>AAW-PROD-External-Unclassified-SPs</code>, <code>AAW-PROD-Internal-Unclassified-SPs</code>, <code>AAW-PROD-External-Protected-B-SPs</code>, <code>AAW-PROD-Internal-Unclassified-SPs</code>
+Note: For debugging there are test containers created in all Prod and Dev storage accounts for future development and testing.</li>
 </ol>
-<p>Note: For debugging there are test containers created in all Prod and Dev storage accounts for future development and testing.</p>
 <h1 id="architecture-design">Architecture Design</h1>
 <p>For more context on the blob-csi system as a whole (from deployment of infrastructure to azure containers), see the attached diagram below.
 In addition, refer to the below legend for line types and colours.</p>

@@ -123,7 +123,7 @@ ACL.
 `readers/writers` namespaces who require access to the volumes
 `spn` name of the Service Principal that was created through the Cloud JIRA
 `subfolder` if a project requires sub-folder mounting then this folder must be created before provisioning the volumes. If sub-folder is not required, leave the name as empty string
-
+5. AAW will add the SP to the appropriate AD Group. Depending on the container created and environment the SP will be added to either: `AAW-PROD-External-Unclassified-SPs`, `AAW-PROD-Internal-Unclassified-SPs`, `AAW-PROD-External-Protected-B-SPs`, `AAW-PROD-Internal-Unclassified-SPs`
 Note: For debugging there are test containers created in all Prod and Dev storage accounts for future development and testing.
 # Architecture Design
 

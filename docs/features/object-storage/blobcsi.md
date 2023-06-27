@@ -109,6 +109,7 @@ PROD
 - stpdmfdiiun01sa (internal unclassified)
 External users should not have access to mount/view internal volumes to their notebooks.
 
+The Kubeflow Access Management component has been [modified](https://github.com/StatCan/kubeflow/pull/138) to prevent non-statcan domain users from being added to Profiles which have `internal` designated volumes. If external users are required to be present in such scenario, the external volumes should be used instead. 
 # How to create a new FDI container?
 
 1. AAW submits a Cloud JIRA (Cloud Operations) to create a new App Registration with the appropriate naming convention (aaw-PROJECTACRONYM-prod-sp)
